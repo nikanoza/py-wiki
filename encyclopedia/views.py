@@ -48,3 +48,22 @@ def search(request):
             return render(request, "encyclopedia/search.html", {
                 "files": files,
             })
+
+def new_page(request):
+    if request.method == "GET":
+        return render(request, "encyclopedia/new.html")
+    else:
+        title = request.POST["title"]
+        content = request.POST["content"]
+        ifTitleExist = util.get_entry(title)
+        if ifTitleExist is not None:
+            return render(request, "encyclopedia/error.html", {
+                "message": "entry page already exist"
+            })
+        else:
+            util.save_entry(title, content)
+            html = convert_to_html(title)
+            return render(request, "encyclopedia/entry.html", {
+                title: title,
+                content: html
+            })
