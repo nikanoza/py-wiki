@@ -29,3 +29,22 @@ def entry(request, text):
             "title": text,
             "content": content
         })
+    
+def search(request):
+    if request.method == "POST": 
+        input = request.POST["q"]
+        html = convert_to_html(input)
+        if html is not None:
+            return render(request, "encyclopedia/entry.html", {
+                "title": input,
+                "content": html
+            })
+        else:
+            entries = util.list_entries()
+            files = []
+            for entry in entries:
+                if input.upper() in entry.upper():
+                    files.append(entry) 
+            return render(request, "encyclopedia/search.html", {
+                "files": files,
+            })
